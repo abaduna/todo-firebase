@@ -3,21 +3,25 @@ import {useAddTransaction} from "../../Hoocks/useAddTransaction"
 import {useState} from "react"
 import {useGetTransaction} from "./../../Hoocks/useGetTransaction"
 
+import GetInformactionTraker from "../../Hoocks/GetInformactionTraker"
+
 export function ExpenseTracker() {
 const {AddTransaction} = useAddTransaction()
+const {getTransactions} = useGetTransaction()
 const [description,setDescription] = useState("")
 const [transactionAmount,settransactionAmount] = useState(0)
 const [transactionType,settransactionType] = useState("expense")
-  const {transactions} = useGetTransaction()
-  const handlerMandaData =async(e)=>{
+  const {transaction} = useGetTransaction()
+  const handlerMandaData =(e)=>{
     e.preventDefault()
+    console.log(`click`);
     AddTransaction({
       description,
       transactionAmount,
       transactionType
     })
-
-  }
+    console.log(transaction);
+  } 
 
   return (
     <>
@@ -38,7 +42,7 @@ const [transactionType,settransactionType] = useState("expense")
             <p>0.00</p>
           </div>
         </div>
-        <form className="add-transaction" onSubmit={handlerMandaData}> 
+        <form className="add-transaction" onSubmit={(e)=>handlerMandaData(e)}> 
           <input type="text" placeholder="descripcion" required onChange={(e)=>setDescription(e.target.value)} />
           <input type="number" placeholder="Amount" required onChange={(e)=>settransactionAmount(e.target.value)}></input>
           <label htmlFor="expense">expense </label>
@@ -63,7 +67,7 @@ const [transactionType,settransactionType] = useState("expense")
     <div className="transaction">
       <h3>Transaction</h3>
       <ul>
-        {transactions.map((transaction)=>{
+        {transaction.map((transaction)=>{
           const {description,transactionAmount, transactionType} = transaction
           return <li>
             <h4>{transaction.description}</h4>
@@ -71,6 +75,10 @@ const [transactionType,settransactionType] = useState("expense")
             
             </li>
         })}
+      </ul>
+      <h3>Transactions</h3>
+      <ul>
+              <GetInformactionTraker></GetInformactionTraker>
       </ul>
 
     </div>

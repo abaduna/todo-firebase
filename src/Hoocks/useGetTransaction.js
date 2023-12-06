@@ -5,39 +5,42 @@ import { db } from "../confic/firebase"
 
 import {useGetUserInfo} from "./useGetUserInfo"
 
+
 export const useGetTransaction=()=>{
-const [transaction,SetTransaction] = useState([])
-
-const getTransactions = async()=>{
-    const transactionColectionRef = collection(db,"transaction")
-    const {userId} = useGetUserInfo()
-    try {
-        const quaryTransaction = async = query(transactionColectionRef,
-            where("userId","==",userId),
-            orderBy("createdAt"))
-
-
-       let unSuscribe =  onSnapshot(quaryTransaction,(snapshot)=>{
-            let docs = []
-
-            snapshot.forEach((doc)=>{
-                const data = doc.data()
-                const id = doc.id
-
-
-                docs.push({...data,id})
+    const [transaction, setTransaction] = useState([]);
+    let   unSuscribe = 0
+    const {userId} = useGetUserInfo() // Mover la llamada a useGetUserInfo aquí
+    const getTransactions =(userId)=>{ // Añadir el parámetro userId
+        const transactionColectionRef = collection(db,"transaction")
+        // const {userId} = useGetUserInfo() // Eliminar esta línea
+        try {
+            const quaryTransaction  = query(transactionColectionRef,
+                where("userId","==",userId),
+                orderBy("createdAt"))
+    
+    
+           unSuscribe =  onSnapshot(quaryTransaction,(snapshot)=>{
+                let docs = []
+    
+                snapshot.forEach((doc)=>{
+                    const data = doc.data()
+                    const id = doc.id
+    
+                    console.log(docs);
+                    docs.push({...data,id})
+                })
+    
+                setTransaction(docs)
             })
-
-            SetTransaction(docs)
-        })
-    } catch (error) {
-        console.error(error);
+        } catch (error) {
+            console.error(error);
+        }
+        return ()=> unSuscribe
     }
-    return ()=> unSuscribe
-}
-
-useEffect(()=>{
-    getTransactions()
-},[])
-    return {transactions}
-}
+    
+    useEffect(()=>{
+        getTransactions(userId) // Pasar el userId como argumento
+        return ()=>unSuscribe
+    },[userId]) // Añadir el userId como dependencia
+        return {transaction}
+    }

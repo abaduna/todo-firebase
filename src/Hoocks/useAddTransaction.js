@@ -7,9 +7,7 @@ export const useAddTransaction =()=>{
     console.log(userId);
     const AddTransaction  = async({description,transactionAmount,transactionType})=>{
       try {
-        if (!userId) {
-            console.error(`userID`);
-        }
+        console.log(description);
         await addDoc(transactionColectionRef,{
             userId,
             description,
